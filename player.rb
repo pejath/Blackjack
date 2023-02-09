@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
+require 'pry'
 class Player
-  attr_accessor :hand, :name, :bank, :role, :hand_v
+  attr_accessor :hand, :name, :bank, :role
 
   def initialize(options = {})
     @hand = []
@@ -19,20 +20,22 @@ class Player
   end
 
   def convert_hand
-    @hand_v = 0
+    @hand_value = 0
     hand = @hand.map(&:chop)
     hand.each do |card|
-      @hand_v += card.to_i
+      @hand_value += card.to_i
     end
 
     hand.sort.reverse.each do |card|
-      @hand_v += 10 if %w[Q K J].include?(card)
-      if card == 'A' && @hand_v + 11 > 21
-        @hand_v += 1
-      elsif card == 'A' && @hand_v + 11 <= 21
-        @hand_v += 11
+      @hand_value += Game::PICTURE if %w[Q K J].include?(card)
+      if card == 'A' && @hand_value + Game::ACE_VALUE_MAX > Game::MAX_POINT
+        @hand_value += Game::ACE_VALUE_MIN
+      elsif card == 'A' && @hand_value + Game::ACE_VALUE_MAX <= Game::MAX_POINT
+        @hand_value += Game::ACE_VALUE_MAX
       end
     end
-    @hand_v
+    @hand_value = MAX_POINT if hand.size == 2 && [hand[0], hand[1], 'A'].uniq.size <= 1
+
+    @hand_value
   end
 end

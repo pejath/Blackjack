@@ -4,14 +4,17 @@ require 'pry'
 
 class Game
   attr_accessor :deck, :human, :bots, :bank, :all_players
+  PICTURE = 10
+  MAX_POINT = 21
+  ACE_VALUE_MIN = 1
+  ACE_VALUE_MAX = 11
 
   def initialize(options = {})
     @all_players = options[:players]
     @deck = Deck.new
-    @human = @all_players.find { |player| player.role == :human }
-    @bots = @all_players.reject { |player| player.role == :human }
+    @human = @all_players[0]
+    @bots = @all_players[1..]
     @bank = 0
-    next_round
   end
 
   def add_card(player)
@@ -19,19 +22,19 @@ class Game
   end
 
   def result
-    @all_players.sort_by do |player|
-      if (21 - player.convert_hand).negative?
-        (21 - player.convert_hand).abs + 30
-      else
-        (21 - player.convert_hand)
-      end
-    end
+    @all_players.sort_by { |player| (MAX_POINT - player.convert_hand).abs }
   end
 
   def who_won?
     res = result
-    if res[0].convert_hand != res[1].convert_hand
-      puts "#{res[0].name} won"
+    if res[0] != res[1]
+      if (MAX_POINT - res[0].convert_hand) >= 0
+        puts "#{res[0].name} won"
+      elsif (MAX_POINT - res[1].convert_hand) >= 0
+        puts "#{res[1].name} won"
+      else
+        puts "#{res.find{|p| MAX_POINT - p.convert_hand >= 0}}"
+      end
     else
       puts 'Draw'
     end
@@ -39,8 +42,14 @@ class Game
 
   def next_round
     res = result
-    if res[0].convert_hand != res[1].convert_hand
-      res.first.bank += @bank
+    if res[0] != res[1]
+    if (MAX_POINT - res[0].convert_hand) >= 0
+      res[0].bank += @bank
+    elsif (MAX_POINT - res[1].convert_hand) >= 0
+      res[1].bank += @bank
+      else
+        res.find{|p| MAX_POINT - p.convert_hand >= 0}
+      end
     else
       @all_players.each { |p| p.bank += 10 }
     end

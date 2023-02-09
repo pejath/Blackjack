@@ -2,15 +2,14 @@
 
 class Deck
   attr_accessor :deck
-
   SYMBOLS = %w[♠ ♥ ♦ ♣].freeze
   NUMS = (2..10).to_a
   PICTURES = %w[J Q K A].freeze
 
   def initialize
+    @deck = []
     (NUMS + PICTURES).each do |card|
       SYMBOLS.each do |sym|
-        @deck ||= []
         @deck << "#{card}#{sym}"
       end
     end

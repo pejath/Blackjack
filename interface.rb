@@ -3,6 +3,7 @@
 class Interface
   def initialize(players)
     @game = Game.new(players: players)
+    @game.next_round
   end
 
   def start
@@ -12,8 +13,6 @@ class Interface
     command = gets.chomp
 
     case command
-    when 'help'
-      puts ''
     when 'pass'
       bot_actions(@game.bots)
     when 'take'
