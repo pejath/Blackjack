@@ -26,9 +26,6 @@ class Interface
       @game.next_round
     when 'exit'
       return
-    else
-      @game.next_round
-
     end
 
     start
