@@ -4,6 +4,7 @@ class Interface
   def initialize(players)
     @game = Game.new(players: players)
     @game.next_round
+    puts "write 'help' to get all commands"
   end
 
   def start
@@ -13,6 +14,11 @@ class Interface
     command = gets.chomp
 
     case command
+    when 'help'
+      puts "commands:\n\t 'take' - to get the card \n\t 'open' - for opening the hand \n\t 'pass' - to skip a turn
+      \t 'exit' - to exit the program"
+      print 'press any enter to continue'
+      gets.chomp
     when 'pass'
       bot_actions(@game.bots)
     when 'take'
@@ -61,7 +67,7 @@ class Interface
     print "Bank:#{@game.bank} #{"\t" * (@game.bots.count + 1)} Your hand: #{@game.human.convert_hand}"
     puts "\n\tYour bank: #{@game.human.bank}\n\tYour hand: #{@game.human.hand.join(' ')}"
     @game.who_won?
-    print 'press any button to continue'
+    print 'press any enter to continue'
     gets.chomp
   end
 
